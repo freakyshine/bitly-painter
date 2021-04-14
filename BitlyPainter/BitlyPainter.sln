@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitlyPainter", "BitlyPainter.csproj", "{DAB597B4-4354-41A7-9C93-F984B9E2017D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DAB597B4-4354-41A7-9C93-F984B9E2017D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAB597B4-4354-41A7-9C93-F984B9E2017D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAB597B4-4354-41A7-9C93-F984B9E2017D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAB597B4-4354-41A7-9C93-F984B9E2017D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {952C4259-1CD7-4A82-8C65-8DCD9B5E9669}
+	EndGlobalSection
+EndGlobal
