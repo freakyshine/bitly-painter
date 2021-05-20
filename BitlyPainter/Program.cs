@@ -14,8 +14,10 @@ namespace BitlyPainter
             Canvas BitlyCanvas = new Canvas();
 
             ConsoleKey input = ConsoleKey.D0;
-            while ((!(input == ConsoleKey.P || input == ConsoleKey.S || input == ConsoleKey.O)))
+            while (!(input == ConsoleKey.P))
             {
+                Console.Clear();
+                Console.WriteLine("Choose what to do");
                 input = Console.ReadKey(true).Key;
                 switch (input)
                 {
@@ -27,6 +29,27 @@ namespace BitlyPainter
                         break;
                     case ConsoleKey.S: // Settings
                         Console.WriteLine("You've chosen the settings function");
+                        // ----- Foreground color -----
+                        Console.WriteLine("Please enter your prefered color in this format: RRRGGGBBB, for example black 000000000 or white 255255255");
+                        string rawInput = Console.ReadLine();
+                        _ = rawInput.Length <= 6 ? rawInput = "---------" : null;
+                        byte R, G, B;
+                        Byte.TryParse(rawInput.Substring(0, 3), out R);
+                        Byte.TryParse(rawInput.Substring(3, 3), out G);
+                        Byte.TryParse(rawInput.Substring(6, 3), out B);
+                        Console.WriteLine($"You picked the color R:{R} G:{G} B:{B}");
+                        BitlyCanvas.Color[0] = R; BitlyCanvas.Color[1] = G; BitlyCanvas.Color[2] = B;
+                        // ----- Background color -----
+                        Console.WriteLine("Please enter your prefered background color in this format: RRRGGGBBB, for example black 000000000 or white 255255255");
+                        rawInput = Console.ReadLine();
+                        _ = rawInput.Length <= 6 ? rawInput = "---------" : null;
+                        Byte.TryParse(rawInput.Substring(0, 3), out R);
+                        Byte.TryParse(rawInput.Substring(3, 3), out G);
+                        Byte.TryParse(rawInput.Substring(6, 3), out B);
+                        Console.WriteLine($"You picked the background color R:{R} G:{G} B:{B}");
+                        BitlyCanvas.BackgroundColor[0] = R; BitlyCanvas.BackgroundColor[1] = G; BitlyCanvas.BackgroundColor[2] = B;
+                        Console.WriteLine("Setup succeeded! Press any key to continue.");
+                        Console.ReadKey(true);
                         break;
                     default:
                         break;
