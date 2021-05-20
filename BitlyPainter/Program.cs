@@ -13,7 +13,25 @@ namespace BitlyPainter
             // The main canvas. Also the only canvas, there is no other canvas.
             Canvas BitlyCanvas = new Canvas();
 
-
+            ConsoleKey input = ConsoleKey.D0;
+            while ((!(input == ConsoleKey.P || input == ConsoleKey.S || input == ConsoleKey.O)))
+            {
+                input = Console.ReadKey(true).Key;
+                switch (input)
+                {
+                    case ConsoleKey.O: // Output
+                        Console.WriteLine("You've chosen the output function");
+                        break;
+                    case ConsoleKey.P: // Paint
+                        Console.WriteLine("You've chosen the paint function");
+                        break;
+                    case ConsoleKey.S: // Settings
+                        Console.WriteLine("You've chosen the settings function");
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             Console.WriteLine("### Welcome to Bitly Painter ###");
             AudibleExit();
