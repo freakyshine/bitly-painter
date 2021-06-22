@@ -8,18 +8,19 @@ namespace BitlyPainter
 {
     class Program
     {
+        static Canvas BitlyCanvas;
         static void Main(string[] args)
         {
             // The main canvas. Also the only canvas, there is no other canvas.
-            Canvas BitlyCanvas = new Canvas();
+            BitlyCanvas = new Canvas();
 
+            Menu();
             
-
             Console.WriteLine("### Welcome to Bitly Painter ###");
             AudibleExit();
         }
 
-        static void Menu (Canvas canvas)
+        static void Menu ()
         {
             ConsoleKey input = ConsoleKey.D0;
             while (!(input == ConsoleKey.P))
@@ -48,7 +49,7 @@ namespace BitlyPainter
                         Byte.TryParse(rawInput.Substring(0, 3), out R);
                         Byte.TryParse(rawInput.Substring(3, 3), out G);
                         Byte.TryParse(rawInput.Substring(6, 3), out B);
-                        canvas.Color[0] = R; canvas.Color[1] = G; canvas.Color[2] = B;
+                        BitlyCanvas.Color[0] = R; BitlyCanvas.Color[1] = G; BitlyCanvas.Color[2] = B;
                         // ----- Background color -----
                         Console.WriteLine("Please enter your prefered background color in this format: RRRGGGBBB, for example black 000000000 or white 255255255");
                         rawInput = Console.ReadLine();
@@ -56,26 +57,26 @@ namespace BitlyPainter
                         Byte.TryParse(rawInput.Substring(0, 3), out R);
                         Byte.TryParse(rawInput.Substring(3, 3), out G);
                         Byte.TryParse(rawInput.Substring(6, 3), out B);
-                        canvas.BackgroundColor[0] = R; canvas.BackgroundColor[1] = G; canvas.BackgroundColor[2] = B;
+                        BitlyCanvas.BackgroundColor[0] = R; BitlyCanvas.BackgroundColor[1] = G; BitlyCanvas.BackgroundColor[2] = B;
 
                         // ------ Canvas size -------
                         Console.WriteLine("Please enter your prefered canvas x value. Valid is a byte.");
                         rawInput = Console.ReadLine();
                         _ = (rawInput.Length <= 0 || rawInput.Length >= 8) ? rawInput = "0" : null;
                         Byte.TryParse(rawInput, out x);
-                        canvas.Xsize = x;
+                        BitlyCanvas.Xsize = x;
 
                         Console.WriteLine("Please enter your prefered canvas y value. Valid is a byte.");
                         rawInput = Console.ReadLine();
                         _ = (rawInput.Length <= 0 || rawInput.Length >= 8) ? rawInput = "0" : null;
                         Byte.TryParse(rawInput, out y);
-                        canvas.Ysize = y;
+                        BitlyCanvas.Ysize = y;
 
                         // ------- Confirm user -------
                         Console.WriteLine("Your settings are set to following parameters:");
-                        Console.WriteLine($"You picked the color R:{canvas.Color[0]} G:{canvas.Color[1]} B:{canvas.Color[2]}");
+                        Console.WriteLine($"You picked the color R:{BitlyCanvas.Color[0]} G:{BitlyCanvas.Color[1]} B:{BitlyCanvas.Color[2]}");
                         //Console.WriteLine($"You picked the background color R:{BitlyCanvas.BackgroundColor[0]} G:{BitlyCanvas.BackgroundColor[1]} B:{BitlyCanvas.BackgroundColor[2]}");
-                        Console.WriteLine($"You picked the canvas size: {canvas.Xsize}px by {canvas.Ysize}px");
+                        Console.WriteLine($"You picked the canvas size: {BitlyCanvas.Xsize}px by {BitlyCanvas.Ysize}px");
 
 
                         // ------ Finished setup -------
