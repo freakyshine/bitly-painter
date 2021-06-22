@@ -18,6 +18,9 @@ namespace BitlyPainter
             {
                 Console.Clear();
                 Console.WriteLine("Choose what to do");
+                Console.WriteLine("<P> Painting\n" +
+                                  "<S> Settings\n" +
+                                  "<O> Output");
                 input = Console.ReadKey(true).Key;
                 switch (input)
                 {
