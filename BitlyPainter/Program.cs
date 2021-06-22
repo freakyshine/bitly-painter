@@ -16,20 +16,21 @@ namespace BitlyPainter
 
             Menu();
             
-            Console.WriteLine("### Welcome to Bitly Painter ###");
             AudibleExit();
         }
 
         static void Menu ()
         {
             ConsoleKey input = ConsoleKey.D0;
-            while (!(input == ConsoleKey.P))
+            while (!(input == ConsoleKey.E))
             {
                 Console.Clear();
+                Console.WriteLine("### Welcome to Bitly Painter ###");
                 Console.WriteLine("Choose what to do");
                 Console.WriteLine("<P> Painting\n" +
                                   "<S> Settings\n" +
-                                  "<O> Output");
+                                  "<O> View painting\n" +
+                                  "<E> Exit");
                 input = Console.ReadKey(true).Key;
                 switch (input)
                 {
@@ -38,6 +39,7 @@ namespace BitlyPainter
                         break;
                     case ConsoleKey.P: // Paint
                         Console.WriteLine("You've chosen the paint function");
+                        BitlyCanvas.Paint();
                         break;
                     case ConsoleKey.S: // Settings
                         Console.WriteLine("You've chosen the settings function");
@@ -106,6 +108,10 @@ namespace BitlyPainter
     class Canvas
     {
         /// <summary>
+        /// A long representing the picture in 0s and 1s.
+        /// </summary>
+        private string CanvasPaint { get; set; }
+        /// <summary>
         /// Stores RGB values in a Byte array. Values from 0-255 are valid. Array stores 3 values.
         /// </summary>
         public byte[] Color { get; set; }
@@ -122,6 +128,28 @@ namespace BitlyPainter
         /// Ysize  changes the values of the private field Dimensions. Valid values are 0-255. Set to a higher or lower value, the actual value will be 0.
         /// </summary>
         public int Ysize { get { return Dimensions[1]; } set { _ = value < 0 || value > 255 ? Dimensions[1] = 0 : Dimensions[1] = (byte)value; } }
+
+        /// <summary>
+        /// The paint method is a method essentially just storing a stirng of 1s and 0s into the object. It will then be used in the output option to be showed on screen
+        /// </summary>
+        public void Paint ()
+        {
+            CanvasPaint = "";
+            do
+            {
+                Console.WriteLine("Enter Bit String:");
+                string bitString = Console.ReadLine();
+                if (Int64.TryParse(bitString, out long n))  // check if input is numeric
+                {
+                    CanvasPaint = bitString;
+                }
+                else
+                {
+                    Console.WriteLine("Please enter valid numeric value");
+                    CanvasPaint = "";
+                }
+            } while (CanvasPaint == "");
+        }
 
         /// <summary>
         /// Constructs a Canvas with given X and Y size.
