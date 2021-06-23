@@ -136,20 +136,38 @@ namespace BitlyPainter
         public void Paint ()
         {
             CanvasPaint = "";
-            do
+            if (Xsize < 256 && Xsize > 0)
             {
-                Console.WriteLine("Enter Bit String:");
-                string bitString = Console.ReadLine();
-                if (Int64.TryParse(bitString, out long n))  // check if input is numeric
+                do
                 {
-                    CanvasPaint = bitString;
-                }
-                else
-                {
-                    Console.WriteLine("Please enter valid numeric value");
-                    CanvasPaint = "";
-                }
-            } while (CanvasPaint == "");
+                    Console.WriteLine("Enter Bit String:");
+                    string bitString = Console.ReadLine();
+                    if (UInt64.TryParse(bitString, out ulong n) && (Xsize * Ysize == bitString.Length))  // check if input is numeric
+                    {
+                        CanvasPaint = bitString;
+                    }
+                    else
+                    {
+                        if (Xsize * Ysize == bitString.Length)
+                        {
+                            Console.WriteLine("Please enter valid numeric value");
+                        }
+                        else
+                        {
+                            Console.WriteLine("You need to specify exactly one bit for each pixel in the image.");
+                            Console.WriteLine($"Your grid has {Xsize*Ysize} px but you specify the value for {bitString.Length} bits");
+                        }
+
+                        CanvasPaint = "";
+                    }
+                } while (CanvasPaint == "");
+            } else
+            {
+                Console.WriteLine("Please define canvas size in settings first. ");
+                Console.Write("<Enter> OK");
+                Console.ReadKey();
+            }
+            
         }
 
         /// <summary>
