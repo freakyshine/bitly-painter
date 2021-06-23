@@ -49,32 +49,38 @@ namespace BitlyPainter
                         Console.WriteLine("Please enter your prefered color in this format: RRRGGGBBB, for example black 000000000 or white 255255255");
                         string rawInput = Console.ReadLine();
                         _ = rawInput.Length <= 6 ? rawInput = "---------" : null;
-                        byte R, G, B, x, y;
-                        Byte.TryParse(rawInput.Substring(0, 3), out R);
-                        Byte.TryParse(rawInput.Substring(3, 3), out G);
-                        Byte.TryParse(rawInput.Substring(6, 3), out B);
-                        BitlyCanvas.Color[0] = R; BitlyCanvas.Color[1] = G; BitlyCanvas.Color[2] = B;
+                        byte parsedR, parsedG, parsedB, parsedX = 0, parsedY = 0;
+                        Byte.TryParse(rawInput.Substring(0, 3), out parsedR);
+                        Byte.TryParse(rawInput.Substring(3, 3), out parsedG);
+                        Byte.TryParse(rawInput.Substring(6, 3), out parsedB);
+                        BitlyCanvas.Color[0] = parsedR; BitlyCanvas.Color[1] = parsedG; BitlyCanvas.Color[2] = parsedB;
                         // ----- Background color -----
                         Console.WriteLine("Please enter your prefered background color in this format: RRRGGGBBB, for example black 000000000 or white 255255255");
                         rawInput = Console.ReadLine();
                         _ = rawInput.Length <= 6 ? rawInput = "---------" : null;
-                        Byte.TryParse(rawInput.Substring(0, 3), out R);
-                        Byte.TryParse(rawInput.Substring(3, 3), out G);
-                        Byte.TryParse(rawInput.Substring(6, 3), out B);
-                        BitlyCanvas.BackgroundColor[0] = R; BitlyCanvas.BackgroundColor[1] = G; BitlyCanvas.BackgroundColor[2] = B;
+                        Byte.TryParse(rawInput.Substring(0, 3), out parsedR);
+                        Byte.TryParse(rawInput.Substring(3, 3), out parsedG);
+                        Byte.TryParse(rawInput.Substring(6, 3), out parsedB);
+                        BitlyCanvas.BackgroundColor[0] = parsedR; BitlyCanvas.BackgroundColor[1] = parsedG; BitlyCanvas.BackgroundColor[2] = parsedB;
 
                         // ------ Canvas size -------
-                        Console.WriteLine("Please enter your prefered canvas x value. Valid is a byte.");
-                        rawInput = Console.ReadLine();
-                        _ = (rawInput.Length <= 0 || rawInput.Length >= 8) ? rawInput = "0" : null;
-                        Byte.TryParse(rawInput, out x);
-                        BitlyCanvas.Xsize = x;
+                        // This not just checks if the product of X and Y is in the range of 1 - 254 but also if x and y independend are in the range as a 1 < product < 255 can only occur if the numbers are in the range
+                        while (!(Enumerable.Range(1, 254).Contains(parsedX * parsedY)))
+                        {
+                            // 254 is the limit of the Console.ReadLine() method
+                            Console.WriteLine("Please enter your prefered canvas x value.\nValid are values that give a product minimum 1 or a product of maximum 254 (0 < x * y < 255).");
+                            rawInput = Console.ReadLine();
+                            _ = (rawInput.Length <= 0 || rawInput.Length >= 8) ? rawInput = "0" : null;
+                            Byte.TryParse(rawInput, out parsedX);
 
-                        Console.WriteLine("Please enter your prefered canvas y value. Valid is a byte.");
-                        rawInput = Console.ReadLine();
-                        _ = (rawInput.Length <= 0 || rawInput.Length >= 8) ? rawInput = "0" : null;
-                        Byte.TryParse(rawInput, out y);
-                        BitlyCanvas.Ysize = y;
+                            Console.WriteLine("Please enter your prefered canvas y value.\nValid are values that give a product minimum 1 or a product of maximum 254 (0 < x * y < 255).");
+                            rawInput = Console.ReadLine();
+                            _ = (rawInput.Length <= 0 || rawInput.Length >= 8) ? rawInput = "0" : null;
+                            Byte.TryParse(rawInput, out parsedY);
+                        }
+                        // After the validation period ended, the values can eventually be stored
+                        BitlyCanvas.Xsize = parsedX;
+                        BitlyCanvas.Ysize = parsedY;
 
                         // ------- Confirm user -------
                         Console.WriteLine("Your settings are set to following parameters:");
