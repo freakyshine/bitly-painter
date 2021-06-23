@@ -36,6 +36,7 @@ namespace BitlyPainter
                 {
                     case ConsoleKey.O: // Output
                         Console.WriteLine("You've chosen the output function");
+                        BitlyCanvas.View();
                         break;
                     case ConsoleKey.P: // Paint
                         Console.WriteLine("You've chosen the paint function");
@@ -152,11 +153,56 @@ namespace BitlyPainter
         }
 
         /// <summary>
-        /// Constructs a Canvas with given X and Y size.
+        /// This method outputs the canvas with colors
         /// </summary>
-        /// <param name="x">Horizontal size</param>
-        /// <param name="y">Vertical size. Valid numbers</param>
-        public Canvas()
+        public void View () // Todo: Make a more precice error detection to give the user more information about what happened wrong
+        {
+            // Check if all necessary values are set
+            //Check if color is set and is valid
+            Console.WriteLine("Checking parameters...");
+            if ((Color[0] < 255 && Color[0] > 0) || (Color[1] < 255 && Color[1] > 0) || (Color[2] < 255 && Color[2] > 0))
+            {
+                Console.WriteLine("Parameters are set and valid\n\n");
+
+                for (int i = 0; i < Ysize; i++)
+                {
+                    for (int j = 0; j < Xsize; j++)
+                    {
+                        if (CanvasPaint.Substring((i*Xsize)+j, 1) == "0")
+                        {
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                            Console.Write("0");
+                            Console.Write("0");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.White;
+                            Console.Write("0");
+                            Console.Write("0");
+                            Console.ResetColor();
+                        }
+                    }
+                    Console.Write("\n");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Parameters are either not valid or not set. Please check the settings option in the menu and input a paint in the paint option.");
+            }
+
+            Console.WriteLine("Press any key to exit");
+            Console.ReadKey();
+        }
+
+            /// <summary>
+            /// Constructs a Canvas with given X and Y size.
+            /// </summary>
+            /// <param name="x">Horizontal size</param>
+            /// <param name="y">Vertical size. Valid numbers</param>
+            public Canvas()
         {
             // Defining a new byte array and setting it's maximum to 3 values. Setting default color to black
             Color = new byte[3] { 0, 0, 0};
