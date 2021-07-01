@@ -11,14 +11,86 @@ namespace BitlyPainter
         static Canvas BitlyCanvas;
         static void Main(string[] args)
         {
-            // The main canvas. Also the only canvas, there is no other canvas.
             BitlyCanvas = new Canvas();
 
-            Menu();
-            
-            AudibleExit();
+            // The main canvas. Also the only canvas, there is no other canvas.
+            while (true)
+            {
+                switch (UserMenu())
+                {
+                    case 0:
+                        Console.WriteLine("You've chosen the paint function");
+                        BitlyCanvas.Paint();
+                        break;
+                    case 1:
+                        Console.WriteLine("You've chosen the settings function");
+                        BitlyCanvas.SetPreferences();
+                        break;
+                    case 2:
+                        Console.WriteLine("You've chosen the output function");
+                        BitlyCanvas.View();
+                        break;
+                    case 3:
+                        // Black foreground color, white background color, canvas size is 6 by 6 pixels and the paint is a smiley
+                        BitlyCanvas.SetPreferences(new byte[] { 255, 255, 255 }, new byte[] { 0, 0, 0 }, new int[] { 6, 6 }, "000000010010000000010010001100000000");
+                        Console.WriteLine("Developer options have been applied.");
+                        break;
+                    case 4:
+                        Console.WriteLine("You've chosen violence (Peace was never an option)");
+                        AudibleExit(0);
+                        break;
+                    default:
+                        break;
+                }
+                Console.Write("<Enter> OK");
+                Console.ReadKey();
+            }            
         }
 
+        /// <summary>
+        /// The User Menu is used to display the menu and also contains the logic for the menu since it is not that complicated
+        /// <para>
+        /// Displays the menu and lets the user choose by using the arrow keys. When pressing enter, the method returns where the menu cursor / pointer is currently set.
+        /// </para>
+        /// </summary>
+        /// <returns>
+        /// The position where the menu pointer is at the event of key input, enter
+        /// </returns>
+        static byte UserMenu()
+        {
+            ConsoleKey userInput;
+            byte menuPointer = 0;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("** * * * * * * * * * * * * * * * * *  **\n" +
+                                  "**     What would you like to do?     **\n" +
+                                  "** * * * * * * * * * * * * * * * * *  **");
+                Console.Write($"[{(menuPointer == 0 ? '*' : ' ')}] Painting\n" +
+                              $"[{(menuPointer == 1 ? '*' : ' ')}] Settings\n" +
+                              $"[{(menuPointer == 2 ? '*' : ' ')}] View Painting\n" +
+                              $"[{(menuPointer == 3 ? '*' : ' ')}] Developer Options\n" +
+                              $"[{(menuPointer == 4 ? '*' : ' ')}] Exit");
+                userInput = Console.ReadKey().Key;
+                switch (userInput)
+                {
+                    case ConsoleKey.UpArrow:
+                        menuPointer--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        menuPointer++;
+                        break;
+                    default:
+                        break;
+                }
+                byte menuOptions = 5;
+                // Following line does: menuOptions-1 is the last option, due to index starting at 0. If the menu pointer overflows, just set to last option of menu
+                menuPointer = (byte)(menuPointer > menuOptions ? menuOptions-1 : menuPointer);
+                menuPointer %= menuOptions;
+            } while (userInput != ConsoleKey.Enter);
+            Console.Clear();
+            return menuPointer;
+        }
         static void Menu ()
         {
             ConsoleKey input = ConsoleKey.D0;
@@ -33,100 +105,18 @@ namespace BitlyPainter
                                   "<.> Developer Option\n" +
                                   "<E> Exit");
                 input = Console.ReadKey(true).Key;
-                switch (input)
-                {
-                    case ConsoleKey.O: // Output
-                        Console.WriteLine("You've chosen the output function");
-                        BitlyCanvas.View();
-                        break;
-                    case ConsoleKey.P: // Paint
-                        Console.WriteLine("You've chosen the paint function");
-                        BitlyCanvas.Paint();
-                        break;
-                    case ConsoleKey.S: // Settings
-                        Console.WriteLine("You've chosen the settings function");
-                        // ----- Foreground color -----
-                        Console.WriteLine("Please enter your prefered color in this format: RRRGGGBBB, for example black 000000000 or white 255255255");
-                        string rawInput = Console.ReadLine();
-                        _ = rawInput.Length <= 6 ? rawInput = "---------" : null;
-                        byte parsedR, parsedG, parsedB, parsedX = 0, parsedY = 0;
-                        Byte.TryParse(rawInput.Substring(0, 3), out parsedR);
-                        Byte.TryParse(rawInput.Substring(3, 3), out parsedG);
-                        Byte.TryParse(rawInput.Substring(6, 3), out parsedB);
-                        BitlyCanvas.Color[0] = parsedR; BitlyCanvas.Color[1] = parsedG; BitlyCanvas.Color[2] = parsedB;
-                        // ----- Background color -----
-                        Console.WriteLine("Please enter your prefered background color in this format: RRRGGGBBB, for example black 000000000 or white 255255255");
-                        rawInput = Console.ReadLine();
-                        _ = rawInput.Length <= 6 ? rawInput = "---------" : null;
-                        Byte.TryParse(rawInput.Substring(0, 3), out parsedR);
-                        Byte.TryParse(rawInput.Substring(3, 3), out parsedG);
-                        Byte.TryParse(rawInput.Substring(6, 3), out parsedB);
-                        BitlyCanvas.BackgroundColor[0] = parsedR; BitlyCanvas.BackgroundColor[1] = parsedG; BitlyCanvas.BackgroundColor[2] = parsedB;
-
-                        // ------ Canvas size -------
-                        // This not just checks if the product of X and Y is in the range of 1 - 254 but also if x and y independend are in the range as a 1 < product < 255 can only occur if the numbers are in the range
-                        while (!(Enumerable.Range(1, 254).Contains(parsedX * parsedY)))
-                        {
-                            // 254 is the limit of the Console.ReadLine() method
-                            Console.WriteLine("Please enter your prefered canvas x value.\nValid are values that give a product minimum 1 or a product of maximum 254 (0 < x * y < 255).");
-                            rawInput = Console.ReadLine();
-                            _ = (rawInput.Length <= 0 || rawInput.Length >= 8) ? rawInput = "0" : null;
-                            Byte.TryParse(rawInput, out parsedX);
-
-                            Console.WriteLine("Please enter your prefered canvas y value.\nValid are values that give a product minimum 1 or a product of maximum 254 (0 < x * y < 255).");
-                            rawInput = Console.ReadLine();
-                            _ = (rawInput.Length <= 0 || rawInput.Length >= 8) ? rawInput = "0" : null;
-                            Byte.TryParse(rawInput, out parsedY);
-                        }
-                        // After the validation period ended, the values can eventually be stored
-                        BitlyCanvas.Xsize = parsedX;
-                        BitlyCanvas.Ysize = parsedY;
-
-                        // ------- Confirm user -------
-                        Console.WriteLine("Your settings are set to following parameters:");
-                        Console.WriteLine($"You picked the color R:{BitlyCanvas.Color[0]} G:{BitlyCanvas.Color[1]} B:{BitlyCanvas.Color[2]}");
-                        //Console.WriteLine($"You picked the background color R:{BitlyCanvas.BackgroundColor[0]} G:{BitlyCanvas.BackgroundColor[1]} B:{BitlyCanvas.BackgroundColor[2]}");
-                        Console.WriteLine($"You picked the canvas size: {BitlyCanvas.Xsize}px by {BitlyCanvas.Ysize}px");
-
-
-                        // ------ Finished setup -------
-                        Console.WriteLine("Setup succeeded! Press any key to continue.");
-                        Console.ReadKey(true);
-
-                        break;
-                    case ConsoleKey.OemPeriod:
-                        // Set foreground color
-                        BitlyCanvas.Color[0] = 255;
-                        BitlyCanvas.Color[1] = 255;
-                        BitlyCanvas.Color[2] = 255;
-
-                        // Set background color
-                        BitlyCanvas.BackgroundColor[0] = 255;
-                        BitlyCanvas.BackgroundColor[1] = 255;
-                        BitlyCanvas.BackgroundColor[2] = 255;
-
-                        // Set paint
-                        //BitlyCanvas.CanvasPaint = "111111001100000000000000000000000000000000011111111000110000000011111111111111111111111110000000000000000000000111111111111111111111111111111111111111111111110000000000000000000000111111111111111111111111111111111111111111111111100000000000000000000011111111111111111111111111111111111111111111111000000000000000000000011111111111111111111111111111111111111111111111000000000000111110000011111111111111111111111111111111111111111111111000000000001111111000011111111111111111111111111111111111111111111111000000000001111111000111111111111111111111111111111111111111111111111000000000001111111000111111111111111111111111111111111111111111111110000000000001111111000111111111111111111111111111111111111111111111111000000000000000111000111111111111111111111111111111111111111111111110000000000000000001000111111111111111111111111111111111111111111111110111000000000100000001111111111111111111111111111111111111111111111100111000000000100000001111111111111111111111111111111111111111111111000110000000001111111011111111111111111111111111111111111111111111111000010000000000111111011111111111111111111111111111111111111111111111000010000000000011111011111111111111111111111111111111111111111111111100000000000001111111011111111111111111111111111111111111111111111111110000000000011111111111111111111111111111111111111111111111111111111111100000000000111111111111111111111111111111111111111111111111111111111100000000000011111111111111111111111111111111111111111111111111111111100000000000011111111111111111111111111111111111111111111111111111111100000000001111111111111111111111111111111111111111111111111111111111100000000011111111111111111111111111111111111111111111111111111111111100000000111111111111111111111111111111111111111111111111111111111111100000000111111111111111111111111111111111111111111111111111111111111100000000000011011111111111111111111111111111111111111111111111111111100000000000111001111111111111111111111111111111111111111111111111111100000000011111000111111111111111111111111111111111111111111111111111100000001111111000001111111111111111111111111111111111111111111111111110000000111111000000001111111111111111111111111111111111111111111111111110000001011000000000000111111111111111111111111111111111111111110000000000000011000000000000000001111111111111111111111111111110001110000000000000111000000000000000000001111111111111111111111111000000110000000000001111000000000000000000000011111111111111111111110000000110000000000011111000000000000000000000001111111111111111111000000000110000000000111110000000000000000000000000111111111111111000000000000110000000001111110000000000000000000000000111111111111100000000000000110000000011111100000000000000000000000000111111111111100000000000000110000000111111000000000000000000000000000111111111111000000000000000100000000001111000000000000000000000000000011111111111000000000000000000001100000000000000000000000000000000000011111111111000000000000000000000000000000000000000000000000000000000011111111111000000000000000000011000000000000000000000000000000000000011111111111000000000000000000011100000000000000000000000000000000000111111111111000000000000000000011000000000000000000000000000000000000111111111111000000000000000000011000000000000000000000000000000000001111111111111000000000000000000011000000000000000000000000000000000000111111111111100000000000000000011000000000000000000000000000000000000111111111111100000000000000000011000000000000000000000000000000000000111111111111100000000000000000011000000000000000000000000000000000001111111111111100000000000000000000000000000000000000000000000000000000111111111111100000000000000000000000000000000000000000000000000000000111111111111100000000000000000000000000000000000000000000000000000000011111111111100000000000000000000000000000000000000000000000011110000001111111111100000000000000000000000000000000000000000000000000000000001111111111110000000000000000000000000000000000000000000000000000000000111111111110000000000000000000000000000000000000000000000000000000000111111111110000000000000000000000000000000000000000000000001000000000111111111110000000000000000000000000000000000000000000000001100000000011111111110000000000000000000000000000000000000000000000000000000000011111111110000000000000000000000000000000000000000000000110000000000001111111111000000000000000000000000000000000000000000000110000000000001111111111000000000000000000000000000000000000000000000000000000000001111111111000000000000000000000000000000000000000000011000000000000000111111111000000000000000000000000000000000000000000011000000000000000111111111000000000000000000000000000000000000000000000000000000000000111111111000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000000000000000000000000000000011111111000000000000000000000000000000000000000000000000000000000000111111111100000000000000000000000000000000000000000000000000000000001111111111100000000000000000000000000000000000000000000000000000000001111111111100000000000000000000000000000000000000000000000000000000011111111111100000000000000000000000000000000000000000000000000000000111111111111100000000000000000000000000000000000000000000000001100011111111111111100000000000000000000000000000000000000000000000000111111111111111111100000000000000000000000000000000000000000000000000011111111111111111100000000000000000000000000000000000000000000000000001111111111111111100000000000000000000000000000000000000000000000000000111111111000000000000000000000000000000000000000000000000000000000000000000000";
-                        BitlyCanvas.CanvasPaint = "000000010010000000010010001100000000"; // Rick, Smiley
-
-                        // Set Canvas Settings
-                        BitlyCanvas.Xsize = 6;
-                        BitlyCanvas.Ysize = 6;
-                        break;
-
-                    default:
-                        break;
-                }
+                
             }
         }
 
         /// <summary>
         /// This method closes the application with a little message, which asks the user to enter any key. Until a key is pressed, the console will stay open.
         /// </summary>
-        static void AudibleExit ()
+        static void AudibleExit (int exitCode)
         {
             Console.WriteLine("Press any key to exit");
             Console.ReadKey();
+            Environment.Exit(exitCode);
         }
     }
 
@@ -191,11 +181,81 @@ namespace BitlyPainter
             } else
             {
                 Console.WriteLine("Please define canvas size in settings first. ");
-                Console.Write("<Enter> OK");
-                Console.ReadKey();
             }
             
         }
+        /// <summary>
+        /// Set up settings for the canvas
+        /// </summary>
+        public void SetPreferences ()
+        {
+            // ----- Foreground color -----
+            Console.WriteLine("Please enter your prefered color in this format: RRRGGGBBB, for example black 000000000 or white 255255255");
+            string rawInput = Console.ReadLine();
+            _ = rawInput.Length <= 6 ? rawInput = "---------" : null;
+            byte parsedR, parsedG, parsedB, parsedX = 0, parsedY = 0;
+            Byte.TryParse(rawInput.Substring(0, 3), out parsedR);
+            Byte.TryParse(rawInput.Substring(3, 3), out parsedG);
+            Byte.TryParse(rawInput.Substring(6, 3), out parsedB);
+            Color[0] = parsedR; Color[1] = parsedG; Color[2] = parsedB;
+            // ----- Background color -----
+            Console.WriteLine("Please enter your prefered background color in this format: RRRGGGBBB, for example black 000000000 or white 255255255");
+            rawInput = Console.ReadLine();
+            _ = rawInput.Length <= 6 ? rawInput = "---------" : null;
+            Byte.TryParse(rawInput.Substring(0, 3), out parsedR);
+            Byte.TryParse(rawInput.Substring(3, 3), out parsedG);
+            Byte.TryParse(rawInput.Substring(6, 3), out parsedB);
+            BackgroundColor[0] = parsedR; BackgroundColor[1] = parsedG; BackgroundColor[2] = parsedB;
+
+            // ------ Canvas size -------
+            // This not just checks if the product of X and Y is in the range of 1 - 254 but also if x and y independend are in the range as a 1 < product < 255 can only occur if the numbers are in the range
+            while (!(Enumerable.Range(1, 254).Contains(parsedX * parsedY)))
+            {
+                // 254 is the limit of the Console.ReadLine() method
+                Console.WriteLine("Please enter your prefered canvas x value.\nValid are values that give a product minimum 1 or a product of maximum 254 (0 < x * y < 255).");
+                rawInput = Console.ReadLine();
+                _ = (rawInput.Length <= 0 || rawInput.Length >= 8) ? rawInput = "0" : null;
+                Byte.TryParse(rawInput, out parsedX);
+
+                Console.WriteLine("Please enter your prefered canvas y value.\nValid are values that give a product minimum 1 or a product of maximum 254 (0 < x * y < 255).");
+                rawInput = Console.ReadLine();
+                _ = (rawInput.Length <= 0 || rawInput.Length >= 8) ? rawInput = "0" : null;
+                Byte.TryParse(rawInput, out parsedY);
+            }
+            // After the validation period ended, the values can eventually be stored
+            Xsize = parsedX;
+            Ysize = parsedY;
+
+            // ------- Confirm user -------
+            Console.WriteLine("Your settings are set to following parameters:");
+            Console.WriteLine($"You picked the color R:{Color[0]} G:{Color[1]} B:{Color[2]}");
+            //Console.WriteLine($"You picked the background color R:{BitlyCanvas.BackgroundColor[0]} G:{BitlyCanvas.BackgroundColor[1]} B:{BitlyCanvas.BackgroundColor[2]}");
+            Console.WriteLine($"You picked the canvas size: {Xsize}px by {Ysize}px");
+
+
+            // ------ Finished setup -------
+            Console.WriteLine("Setup succeeded! Press any key to continue.");
+
+        }
+        public void SetPreferences(byte[] foregroundColor, byte[] backgroundColor, int[] canvasDimensions, string paint)
+        {
+            // Set foreground color
+            Color[0] = foregroundColor[0];
+            Color[1] = foregroundColor[1];
+            Color[2] = foregroundColor[2];
+
+            // Set background color
+            BackgroundColor[0] = backgroundColor[0];
+            BackgroundColor[1] = backgroundColor[1];
+            BackgroundColor[2] = backgroundColor[2];
+
+            // Set paint
+            CanvasPaint = paint;
+
+            // Set Canvas Settings
+            Xsize = canvasDimensions[0];
+            Ysize = canvasDimensions[1];
+        } 
 
         /// <summary>
         /// This method outputs the canvas with colors
@@ -237,17 +297,14 @@ namespace BitlyPainter
             {
                 Console.WriteLine("Parameters are either not valid or not set. Please check the settings option in the menu and input a paint in the paint option.");
             }
-
-            Console.WriteLine("Press any key to exit");
-            Console.ReadKey();
         }
 
-            /// <summary>
+        /// <summary>
             /// Constructs a Canvas with given X and Y size.
             /// </summary>
             /// <param name="x">Horizontal size</param>
             /// <param name="y">Vertical size. Valid numbers</param>
-            public Canvas()
+        public Canvas()
         {
             // Defining a new byte array and setting it's maximum to 3 values. Setting default color to black
             Color = new byte[3] { 0, 0, 0};
